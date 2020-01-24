@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrestronDLLSigningTool", "CrestronDLLSigningTool\CrestronDLLSigningTool.vcxproj", "{C29B73B1-242B-4D38-8EF7-994F1000802B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Debug|x64.ActiveCfg = Debug|x64
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Debug|x64.Build.0 = Debug|x64
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Debug|x86.ActiveCfg = Debug|Win32
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Debug|x86.Build.0 = Debug|Win32
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Release|x64.ActiveCfg = Release|x64
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Release|x64.Build.0 = Release|x64
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Release|x86.ActiveCfg = Release|Win32
+		{C29B73B1-242B-4D38-8EF7-994F1000802B}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07708BB6-A2F8-4B2F-AEEC-3DE00CDF0017}
+	EndGlobalSection
+EndGlobal
