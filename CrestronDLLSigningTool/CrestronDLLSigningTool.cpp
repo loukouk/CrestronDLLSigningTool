@@ -26,7 +26,7 @@ struct SignDLLParam
 {
 	string target_path;
 	string spluscc_path;
-	int series;
+	int series = 0;
 };
 
 //thread-safe system message handler
@@ -134,10 +134,9 @@ void Usage()
 	exit(EXIT_SUCCESS);
 }
 
-
-DWORD WINAPI SignDLL(LPVOID lpParam)
+int _SignDLL(LPVOID lpParam, string &tempdir_path)
 {
-	SignDLLParam* param = (SignDLLParam*)lpParam;
+		SignDLLParam* param = (SignDLLParam*)lpParam;
 	string target_path = param->target_path;
 	string spluscc_path = param->spluscc_path;
 	int series = param->series;
@@ -184,7 +183,7 @@ DWORD WINAPI SignDLL(LPVOID lpParam)
 		return(EXIT_FAILURE);
 	}
 
-	string tempdir_path = tempdir_path_c_arr;
+	tempdir_path = tempdir_path_c_arr;
 	delete[] tempdir_path_c_arr;
 
 	//converting GUID to string and appending to temp path
@@ -366,40 +365,33 @@ DWORD WINAPI SignDLL(LPVOID lpParam)
 
 	if (!MoveFileA(target_full_path, target_full_path_bak.c_str()))
 	{
-		errno_t err;
-		switch (err = GetLastError())
-		{
-		case ERROR_ALREADY_EXISTS:
-			VerboseMsg("Backup file already exists and will be replaced...");
-			if (!DeleteFileA(target_full_path_bak.c_str()))
-			{
-				ErrorHandler("Warning: Failed to delete existing bak file.\n\tOriginal DLL will be replaced by signed version and not backed up.", target_full_path_bak.c_str());
-			}
-			if (!MoveFileA(target_full_path, target_full_path_bak.c_str()))
-			{
-				ErrorHandler("Warning: Failed to rename the original target file for backup.\n\tFile will be replaced by signed version.", target_full_path_bak.c_str());
-			}
-			break;
-		default:
-			ErrorHandler("Warning: Failed to rename the original target file for backup.\n\tFile will be replaced by signed version.", target_full_path_bak.c_str());
-		}
+		ErrorHandler("Warning: Failed to rename the original target file for backup.\n\tFile will be replaced by signed version.", target_full_path_bak.c_str());
 	}
 
 	//copy the signed DLL from the temp dir to replace the original target DLL
 	if (!CopyFileA(dummy_dll_path.c_str(), target_path.c_str(), false))
 	{
 		ErrorHandler("ERROR: Failed to move signed DLL from temp directory.\n\tSigned DLL file can be found below",dummy_dll_path.c_str());
-		return(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-
-
-
-	VerboseMsg("Done. Cleaning up temporary directory...");
 
 	delete[] mod_path;
 	delete DebugEvent;
 	delete StartupInfo;
 	delete ProcessInformation;
+
+	return(EXIT_SUCCESS);
+}
+
+DWORD WINAPI SignDLL(LPVOID lpParam)
+{
+	string tempdir_path;
+	int ret;
+
+	ret = _SignDLL(lpParam, tempdir_path);
+
+	VerboseMsg("Cleaning up temporary directory...");
+
 
 	//creating a double null terminated string for SHFileOperations()
 	int err, tempdir_path_fileop_sz = tempdir_path.length() + 2;
@@ -425,7 +417,7 @@ DWORD WINAPI SignDLL(LPVOID lpParam)
 
 	delete[] tempdir_path_fileop;
 
-	return(EXIT_SUCCESS);
+	return(ret);
 }
 
 
@@ -480,8 +472,6 @@ int main(int argc, char* argv[])
 	if (series == 0)
 		series = DEFAULT_SERIES;
 
-	cout << spluscc_path << endl << series << endl;
-	std::cin.ignore();
 
 	size_t num_threads = targets.size();
 	HANDLE *thread_handles = new HANDLE[num_threads];
